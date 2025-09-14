@@ -1,5 +1,7 @@
 import z from "zod";
 import fs from "fs";
+import os from "os";
+import path from "path";
 
 export type Config = z.infer<typeof ConfigSchema>;
 
@@ -52,5 +54,5 @@ function validateConfig(rawConfig: any) {
 }
 
 function getConfigFilePath() {
-  return "./.gatorconfig.json";
+  return path.join(os.homedir(), ".gatorconfig.json");
 }
