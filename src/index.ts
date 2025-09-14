@@ -1,12 +1,25 @@
-import { readConfig, setUser } from "./config";
+import {
+  CommandsRegistry,
+  handlerLogin,
+  registerCommand,
+  runCommand,
+} from "./commandHandler";
 
 function main() {
-  setUser("Roq");
+  const commandsRegistry: CommandsRegistry = {};
 
-  const cfg = readConfig();
+  registerCommand(commandsRegistry, "login", handlerLogin);
 
-  console.log("dbUrl:", cfg.db_url);
-  console.log("currentUserName:", cfg.current_user_name);
+  const args = process.argv.slice(2);
+  if (args.length < 1) {
+    console.error("not enough args provided");
+    process.exit(1);
+  }
+
+  const cmd = args[0];
+  const restArgs = args.slice(1);
+
+  runCommand(commandsRegistry, cmd, ...restArgs);
 }
 
 main();
