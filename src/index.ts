@@ -3,7 +3,7 @@ import {
   handlerLogin,
   registerCommand,
   runCommand,
-} from "./commandHandler";
+} from "./core/commandHandler";
 
 function main() {
   const commandsRegistry: CommandsRegistry = {};
