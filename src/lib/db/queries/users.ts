@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import { users } from "../schema";
 import { db } from "..";
 
@@ -15,4 +15,8 @@ export async function getUser(name: string) {
     .where(eq(users.name, name))
     .limit(1);
   return rows[0] ?? null;
+}
+
+export async function listUsers() {
+  return await db.select().from(users);
 }
