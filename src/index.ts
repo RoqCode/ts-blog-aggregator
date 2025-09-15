@@ -1,14 +1,16 @@
 import {
   CommandsRegistry,
   handlerLogin,
+  handlerRegister,
   registerCommand,
   runCommand,
 } from "./core/commandHandler";
 
-function main() {
+async function main() {
   const commandsRegistry: CommandsRegistry = {};
 
   registerCommand(commandsRegistry, "login", handlerLogin);
+  registerCommand(commandsRegistry, "register", handlerRegister);
 
   const args = process.argv.slice(2);
   if (args.length < 1) {
@@ -19,7 +21,9 @@ function main() {
   const cmd = args[0];
   const restArgs = args.slice(1);
 
-  runCommand(commandsRegistry, cmd, ...restArgs);
+  await runCommand(commandsRegistry, cmd, ...restArgs);
+
+  process.exit(0);
 }
 
 main();
