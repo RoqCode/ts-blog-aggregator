@@ -1,7 +1,7 @@
-import { getUser, createUser, listUsers } from "src/lib/db/queries/users";
+import { resetDB } from "src/lib/db/queries/resetDB";
+import { createUser, getUser, listUsers } from "src/lib/db/queries/users";
 import { CommandHandler } from "./commandHandler";
 import { readConfig, setUser } from "./config";
-import { resetDB } from "src/lib/db/queries/resetDB";
 
 export const handlerLogin: CommandHandler = async (_cmdName, ...args) => {
   if (!args?.length) {
