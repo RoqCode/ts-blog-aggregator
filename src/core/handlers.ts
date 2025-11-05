@@ -5,6 +5,7 @@ import { readConfig, setUser } from "./config";
 import { fetchFeed } from "src/lib/utils/fetchFeed";
 import { createFeed } from "src/lib/utils/createFeed";
 import { printFeed } from "src/lib/utils/printFeed";
+import { listFeeds } from "src/lib/utils/listFeeds";
 
 export const handlerLogin: CommandHandler = async (_cmdName, ...args) => {
   if (!args?.length) {
@@ -116,7 +117,17 @@ export const handerAddFeed: CommandHandler = async (_cmdName, ...args) => {
     await printFeed(feed, activeUser);
     process.exit(0);
   } catch (e) {
-    console.error("fetching RSS Feed failed:", e);
+    console.error("creating RSS Feed failed:", e);
+    process.exit(1);
+  }
+};
+
+export const handerListFeeds: CommandHandler = async () => {
+  try {
+    await listFeeds();
+    process.exit(0);
+  } catch (e) {
+    console.error("listing RSS Feeds failed:", e);
     process.exit(1);
   }
 };

@@ -19,6 +19,16 @@ export async function getUser(name: string) {
   return rows[0] ?? null;
 }
 
+export async function getUserById(id: string) {
+  if (!id) throw new Error("name required");
+  const rows = await db
+    .select({ name: users.name })
+    .from(users)
+    .where(eq(users.id, id))
+    .limit(1);
+  return rows[0] ?? null;
+}
+
 export async function listUsers(): Promise<User[]> {
   return await db.select().from(users);
 }

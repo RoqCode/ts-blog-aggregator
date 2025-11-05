@@ -6,6 +6,7 @@ import {
 import {
   handerAddFeed,
   handerAgg,
+  handerListFeeds,
   handlerListUsers,
   handlerLogin,
   handlerRegister,
@@ -21,6 +22,7 @@ async function main() {
   registerCommand(commandsRegistry, "users", handlerListUsers);
   registerCommand(commandsRegistry, "agg", handerAgg);
   registerCommand(commandsRegistry, "addfeed", handerAddFeed);
+  registerCommand(commandsRegistry, "feeds", handerListFeeds);
 
   const args = process.argv.slice(2);
   if (args.length < 1) {
