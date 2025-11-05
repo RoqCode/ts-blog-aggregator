@@ -2,6 +2,8 @@ import { eq } from "drizzle-orm";
 import { users } from "../schema";
 import { db } from "..";
 
+export type User = typeof users.$inferSelect;
+
 export async function createUser(name: string) {
   const [result] = await db.insert(users).values({ name: name }).returning();
   return result;
@@ -17,6 +19,6 @@ export async function getUser(name: string) {
   return rows[0] ?? null;
 }
 
-export async function listUsers() {
+export async function listUsers(): Promise<User[]> {
   return await db.select().from(users);
 }

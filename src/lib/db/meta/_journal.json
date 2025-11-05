@@ -8,6 +8,20 @@
       "when": 1757868527047,
       "tag": "0000_nosy_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1762364504208,
+      "tag": "0001_damp_leper_queen",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1762373539028,
+      "tag": "0002_foamy_maggott",
+      "breakpoints": true
     }
   ]
 }
