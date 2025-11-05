@@ -3,6 +3,8 @@ import { createUser, getUser, listUsers } from "src/lib/db/queries/users";
 import { CommandHandler } from "./commandHandler";
 import { readConfig, setUser } from "./config";
 import { fetchFeed } from "src/lib/utils/fetchFeed";
+import { createFeed } from "src/lib/utils/createFeed";
+import { printFeed } from "src/lib/utils/printFeed";
 
 export const handlerLogin: CommandHandler = async (_cmdName, ...args) => {
   if (!args?.length) {
@@ -75,6 +77,43 @@ export const handerAgg: CommandHandler = async () => {
   try {
     const feed = await fetchFeed("https://www.wagslane.dev/index.xml");
     console.log(feed);
+    process.exit(0);
+  } catch (e) {
+    console.error("fetching RSS Feed failed:", e);
+    process.exit(1);
+  }
+};
+
+export const handerAddFeed: CommandHandler = async (_cmdName, ...args) => {
+  if (args?.length !== 2) {
+    console.error("please provide a name and a url");
+    process.exit(1);
+  }
+
+  const allUsers = await listUsers();
+  if (!allUsers?.length) {
+    console.error("no users found. please register as a new user");
+    process.exit(1);
+  }
+
+  const activeUserName = readConfig().current_user_name ?? null;
+  if (!activeUserName) {
+    console.error("no active user set in config. please login");
+    process.exit(1);
+  }
+
+  const activeUser = allUsers.find((user) => user.name === activeUserName);
+  if (!activeUser?.id) {
+    console.error("config mismatch. active user not found in data base");
+    process.exit(1);
+  }
+
+  const name = args[0];
+  const url = args[1];
+
+  try {
+    const feed = await createFeed(url, name, activeUser?.id);
+    await printFeed(feed, activeUser);
     process.exit(0);
   } catch (e) {
     console.error("fetching RSS Feed failed:", e);

@@ -21,7 +21,21 @@ const RSSFeedSchema = z.object({
   }),
 });
 
-export async function fetchFeed(url: string) {
+export type RSSItem = z.infer<typeof RSSItemSchema>;
+export type RSSChannel = z.infer<typeof ChannelSchema>;
+export type FeedResult = {
+  title: string;
+  link: string;
+  description: string;
+  items: {
+    title: string;
+    link: string;
+    description: string;
+    pubDate: string;
+  }[];
+};
+
+export async function fetchFeed(url: string): Promise<FeedResult> {
   const res = await fetch(url, {
     headers: { "User-Agent": "gator" },
   });

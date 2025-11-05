@@ -4,6 +4,7 @@ import {
   runCommand,
 } from "./core/commandHandler";
 import {
+  handerAddFeed,
   handerAgg,
   handlerListUsers,
   handlerLogin,
@@ -19,6 +20,7 @@ async function main() {
   registerCommand(commandsRegistry, "reset", handlerReset);
   registerCommand(commandsRegistry, "users", handlerListUsers);
   registerCommand(commandsRegistry, "agg", handerAgg);
+  registerCommand(commandsRegistry, "addfeed", handerAddFeed);
 
   const args = process.argv.slice(2);
   if (args.length < 1) {
