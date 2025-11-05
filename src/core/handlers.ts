@@ -2,6 +2,7 @@ import { resetDB } from "src/lib/db/queries/resetDB";
 import { createUser, getUser, listUsers } from "src/lib/db/queries/users";
 import { CommandHandler } from "./commandHandler";
 import { readConfig, setUser } from "./config";
+import { fetchFeed } from "src/lib/utils/fetchFeed";
 
 export const handlerLogin: CommandHandler = async (_cmdName, ...args) => {
   if (!args?.length) {
@@ -66,6 +67,17 @@ export const handlerListUsers: CommandHandler = async () => {
     process.exit(0);
   } catch (e) {
     console.error("listing users failed:", e);
+    process.exit(1);
+  }
+};
+
+export const handerAgg: CommandHandler = async () => {
+  try {
+    const feed = await fetchFeed("https://www.wagslane.dev/index.xml");
+    console.log(feed);
+    process.exit(0);
+  } catch (e) {
+    console.error("fetching RSS Feed failed:", e);
     process.exit(1);
   }
 };
