@@ -6,6 +6,8 @@ import { fetchFeed } from "src/lib/utils/fetchFeed";
 import { createFeed } from "src/lib/utils/createFeed";
 import { printFeed } from "src/lib/utils/printFeed";
 import { listFeeds } from "src/lib/utils/listFeeds";
+import { followFeed } from "src/lib/utils/followFeed";
+import { getFeedFollowsForUser } from "src/lib/utils/getFeedFollowsForUser";
 
 export const handlerLogin: CommandHandler = async (_cmdName, ...args) => {
   if (!args?.length) {
@@ -74,7 +76,7 @@ export const handlerListUsers: CommandHandler = async () => {
   }
 };
 
-export const handerAgg: CommandHandler = async () => {
+export const handlerAgg: CommandHandler = async () => {
   try {
     const feed = await fetchFeed("https://www.wagslane.dev/index.xml");
     console.log(feed);
@@ -85,7 +87,7 @@ export const handerAgg: CommandHandler = async () => {
   }
 };
 
-export const handerAddFeed: CommandHandler = async (_cmdName, ...args) => {
+export const handlerAddFeed: CommandHandler = async (_cmdName, ...args) => {
   if (args?.length !== 2) {
     console.error("please provide a name and a url");
     process.exit(1);
@@ -113,7 +115,7 @@ export const handerAddFeed: CommandHandler = async (_cmdName, ...args) => {
   const url = args[1];
 
   try {
-    const feed = await createFeed(url, name, activeUser?.id);
+    const feed = await createFeed(url, name, activeUser);
     await printFeed(feed, activeUser);
     process.exit(0);
   } catch (e) {
@@ -122,7 +124,7 @@ export const handerAddFeed: CommandHandler = async (_cmdName, ...args) => {
   }
 };
 
-export const handerListFeeds: CommandHandler = async () => {
+export const handlerListFeeds: CommandHandler = async () => {
   try {
     await listFeeds();
     process.exit(0);
@@ -131,3 +133,64 @@ export const handerListFeeds: CommandHandler = async () => {
     process.exit(1);
   }
 };
+
+export const handlerFollowFeed: CommandHandler = async (_cmdName, ...args) => {
+  if (args?.length !== 1) {
+    console.error("please provide a feed url");
+    process.exit(1);
+  }
+
+  const allUsers = await listUsers();
+  if (!allUsers?.length) {
+    console.error("no users found. please register as a new user");
+    process.exit(1);
+  }
+
+  const activeUserName = readConfig().current_user_name ?? null;
+  if (!activeUserName) {
+    console.error("no active user set in config. please login");
+    process.exit(1);
+  }
+
+  const activeUser = allUsers.find((user) => user.name === activeUserName);
+  if (!activeUser?.id) {
+    console.error("config mismatch. active user not found in data base");
+    process.exit(1);
+  }
+
+  const url = args[0];
+
+  try {
+    await followFeed(url, activeUser)
+  } catch (e) {
+    console.error("following feed failed:", e);
+    process.exit(1);
+  }
+}
+
+export const handlerGetFeedFollows: CommandHandler = async () => {
+  const allUsers = await listUsers();
+  if (!allUsers?.length) {
+    console.error("no users found. please register as a new user");
+    process.exit(1);
+  }
+
+  const activeUserName = readConfig().current_user_name ?? null;
+  if (!activeUserName) {
+    console.error("no active user set in config. please login");
+    process.exit(1);
+  }
+
+  const activeUser = allUsers.find((user) => user.name === activeUserName);
+  if (!activeUser?.id) {
+    console.error("config mismatch. active user not found in data base");
+    process.exit(1);
+  }
+
+  try {
+    await getFeedFollowsForUser(activeUser)
+  } catch (e) {
+    console.error("could not retrieve followed feeds:", e);
+    process.exit(1);
+  }
+}

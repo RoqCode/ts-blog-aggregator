@@ -4,9 +4,11 @@ import {
   runCommand,
 } from "./core/commandHandler";
 import {
-  handerAddFeed,
-  handerAgg,
-  handerListFeeds,
+  handlerAddFeed,
+  handlerAgg,
+  handlerFollowFeed,
+  handlerGetFeedFollows,
+  handlerListFeeds,
   handlerListUsers,
   handlerLogin,
   handlerRegister,
@@ -20,9 +22,11 @@ async function main() {
   registerCommand(commandsRegistry, "register", handlerRegister);
   registerCommand(commandsRegistry, "reset", handlerReset);
   registerCommand(commandsRegistry, "users", handlerListUsers);
-  registerCommand(commandsRegistry, "agg", handerAgg);
-  registerCommand(commandsRegistry, "addfeed", handerAddFeed);
-  registerCommand(commandsRegistry, "feeds", handerListFeeds);
+  registerCommand(commandsRegistry, "agg", handlerAgg);
+  registerCommand(commandsRegistry, "addfeed", handlerAddFeed);
+  registerCommand(commandsRegistry, "feeds", handlerListFeeds);
+  registerCommand(commandsRegistry, "follow", handlerFollowFeed);
+  registerCommand(commandsRegistry, "following", handlerGetFeedFollows);
 
   const args = process.argv.slice(2);
   if (args.length < 1) {
