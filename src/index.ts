@@ -13,6 +13,7 @@ import {
   handlerLogin,
   handlerRegister,
   handlerReset,
+  handlerUnfollow,
 } from "./core/handlers";
 import { loggedIn } from "./middleware/loggedIn";
 
@@ -32,6 +33,7 @@ async function main() {
     "following",
     loggedIn(handlerGetFeedFollows),
   );
+  registerCommand(commandsRegistry, "unfollow", loggedIn(handlerUnfollow));
 
   const args = process.argv.slice(2);
   if (args.length < 1) {

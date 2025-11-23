@@ -9,6 +9,7 @@ import { listFeeds } from "src/lib/utils/listFeeds";
 import { followFeed } from "src/lib/utils/followFeed";
 import { getFeedFollowsForUser } from "src/lib/utils/getFeedFollowsForUser";
 import { UserCommandHandler } from "src/middleware/loggedIn";
+import { deleteFollow } from "src/lib/utils/deleteFollow";
 
 export const handlerLogin: CommandHandler = async (_cmdName, ...args) => {
   if (!args?.length) {
@@ -146,6 +147,25 @@ export const handlerGetFeedFollows: UserCommandHandler = async (activeUser) => {
     await getFeedFollowsForUser(activeUser);
   } catch (e) {
     console.error("could not retrieve followed feeds:", e);
+    process.exit(1);
+  }
+};
+
+export const handlerUnfollow: UserCommandHandler = async (
+  activeUser,
+  _cmdName,
+  ...args
+) => {
+  if (args?.length !== 1) {
+    console.error("please provide a feed url");
+    process.exit(1);
+  }
+
+  const url = args[0];
+  try {
+    await deleteFollow(activeUser, url);
+  } catch (e) {
+    console.error("error while unfollow:", e);
     process.exit(1);
   }
 };
