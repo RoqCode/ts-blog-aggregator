@@ -8,6 +8,7 @@ import { printFeed } from "src/lib/utils/printFeed";
 import { listFeeds } from "src/lib/utils/listFeeds";
 import { followFeed } from "src/lib/utils/followFeed";
 import { getFeedFollowsForUser } from "src/lib/utils/getFeedFollowsForUser";
+import { UserCommandHandler } from "src/middleware/loggedIn";
 
 export const handlerLogin: CommandHandler = async (_cmdName, ...args) => {
   if (!args?.length) {
@@ -87,27 +88,13 @@ export const handlerAgg: CommandHandler = async () => {
   }
 };
 
-export const handlerAddFeed: CommandHandler = async (_cmdName, ...args) => {
+export const handlerAddFeed: UserCommandHandler = async (
+  activeUser,
+  _cmdName,
+  ...args
+) => {
   if (args?.length !== 2) {
     console.error("please provide a name and a url");
-    process.exit(1);
-  }
-
-  const allUsers = await listUsers();
-  if (!allUsers?.length) {
-    console.error("no users found. please register as a new user");
-    process.exit(1);
-  }
-
-  const activeUserName = readConfig().current_user_name ?? null;
-  if (!activeUserName) {
-    console.error("no active user set in config. please login");
-    process.exit(1);
-  }
-
-  const activeUser = allUsers.find((user) => user.name === activeUserName);
-  if (!activeUser?.id) {
-    console.error("config mismatch. active user not found in data base");
     process.exit(1);
   }
 
@@ -134,63 +121,31 @@ export const handlerListFeeds: CommandHandler = async () => {
   }
 };
 
-export const handlerFollowFeed: CommandHandler = async (_cmdName, ...args) => {
+export const handlerFollowFeed: UserCommandHandler = async (
+  activeUser,
+  _cmdName,
+  ...args
+) => {
   if (args?.length !== 1) {
     console.error("please provide a feed url");
-    process.exit(1);
-  }
-
-  const allUsers = await listUsers();
-  if (!allUsers?.length) {
-    console.error("no users found. please register as a new user");
-    process.exit(1);
-  }
-
-  const activeUserName = readConfig().current_user_name ?? null;
-  if (!activeUserName) {
-    console.error("no active user set in config. please login");
-    process.exit(1);
-  }
-
-  const activeUser = allUsers.find((user) => user.name === activeUserName);
-  if (!activeUser?.id) {
-    console.error("config mismatch. active user not found in data base");
     process.exit(1);
   }
 
   const url = args[0];
 
   try {
-    await followFeed(url, activeUser)
+    await followFeed(url, activeUser);
   } catch (e) {
     console.error("following feed failed:", e);
     process.exit(1);
   }
-}
+};
 
-export const handlerGetFeedFollows: CommandHandler = async () => {
-  const allUsers = await listUsers();
-  if (!allUsers?.length) {
-    console.error("no users found. please register as a new user");
-    process.exit(1);
-  }
-
-  const activeUserName = readConfig().current_user_name ?? null;
-  if (!activeUserName) {
-    console.error("no active user set in config. please login");
-    process.exit(1);
-  }
-
-  const activeUser = allUsers.find((user) => user.name === activeUserName);
-  if (!activeUser?.id) {
-    console.error("config mismatch. active user not found in data base");
-    process.exit(1);
-  }
-
+export const handlerGetFeedFollows: UserCommandHandler = async (activeUser) => {
   try {
-    await getFeedFollowsForUser(activeUser)
+    await getFeedFollowsForUser(activeUser);
   } catch (e) {
     console.error("could not retrieve followed feeds:", e);
     process.exit(1);
   }
-}
+};
